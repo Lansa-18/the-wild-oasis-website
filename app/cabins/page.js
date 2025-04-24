@@ -1,14 +1,20 @@
 import { Suspense } from "react";
-import CabinList from "../_components/CabinList";
-import Spinner from "../_components/Spinner";
+import CabinList from "@/app/_components/CabinList";
+import Spinner from "@/app/_components/Spinner";
+import Filter from "@/app/_components/Filter";
 
 export const metadata = {
   title: "Cabins",
 };
 
+// This revalidation only applies to statically generated pages.
 export const revalidate = 3600;
 
-export default function Page() {
+// It is important to note that the searchParams is only available in the page.js files and not other server components.
+// Getting this searchParams automatically makes this component dynamically rendered.
+export default function Page({ searchParams }) {
+  const filter = searchParams?.capacity ?? "all";
+
   return (
     <div>
       <h1 className="text-4xl mb-5 text-accent-400 font-medium">
@@ -23,8 +29,13 @@ export default function Page() {
         Welcome to paradise.
       </p>
 
-      <Suspense fallback={<Spinner />}>
-        <CabinList />
+      <div className="flex justify-end mb-8">
+        <Filter />
+      </div>
+
+      {/* All page navigations are automatically wrapped in transitons is nextjs, due to that, suspense will not re-render the fallback and the way we fix that is by passing a unique key to the suspense */}
+      <Suspense fallback={<Spinner />} key={filter}>
+        <CabinList filter={filter} />
       </Suspense>
     </div>
   );
