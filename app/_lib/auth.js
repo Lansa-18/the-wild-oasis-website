@@ -13,9 +13,14 @@ const authConfig = {
       return !!auth?.user; // The double exlamation mark (!!) automatically converts the result of that value to a boolean
     },
   },
+  pages: {
+    signIn: "/login",
+  },
 };
 
 export const {
   auth,
+  signIn,
+  signOut,
   handlers: { GET, POST },
 } = NextAuth(authConfig);
