@@ -8,6 +8,11 @@ const authConfig = {
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
     }),
   ],
+  callbacks: {
+    authorized({ auth, request }) {
+      return !!auth?.user; // The double exlamation mark (!!) automatically converts the result of that value to a boolean
+    },
+  },
 };
 
 export const {
