@@ -39,3 +39,22 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+
+/*
+  MIDDLEWARE DETAILS IN NEXTJS
+  - By default, middleware runs before every route in a project, but we can specify which paths using a matcher
+  - Analogy: Middleware is a chunk of code that's in every page.js component
+  - Only one middleware function needs to be exported from middleware.js or .ts in the project root folder
+
+  WHY DO WE NEED THIS?
+  - Reading and setting cookies and headers
+  - Authentication and Authorization
+  - Server-side analytics
+  - Redirect based on geolocation
+  - A/B Testing
+
+  MIDDLEWARE NEEDS TO PRODUCE A RESPONSE, WHICH CAN HAPPEN IN TWO WAYS
+  - 1. Redirect or rewrite to a route.
+  - 2. Directly send a json response to the client.
+
+*/
