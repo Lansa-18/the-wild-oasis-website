@@ -57,4 +57,7 @@ export default function RootLayout({ children }) {
   - 1. Redirect or rewrite to a route.
   - 2. Directly send a json response to the client.
 
+  OPTIMISTIC UI: This is a trick and a technique that we can use in order to improve the perceived performance of a user interface.
+  - It is called optimistic because we assume that a certain asynchronous operation would be successful before it has even finished.
+
 */
