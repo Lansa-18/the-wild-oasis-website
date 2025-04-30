@@ -1,36 +1,199 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🏞️ The Wild Oasis: Your Paradise Awaits 🌟
 
-## Getting Started
+Welcome to **The Wild Oasis**, a luxurious cabin hotel nestled in the heart of the Italian Dolomites! 🌲🏔️ Experience nature's beauty with modern comfort. This React-based project offers a seamless booking experience, stunning cabin visuals, and a user-friendly interface. ✨
 
-First, run the development server:
+## 🚀 Description
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+This project features:
+
+- Cabin browsing and detailed views 🏠
+- Reservation system 📅
+- User authentication and profile management 🔑
+- Responsive design for all devices 📱
+
+## 🛠️ Usage
+
+### Browsing Cabins
+Navigate to the `/cabins` route to view available cabins.
+
+```jsx
+<Link href="/cabins">Explore Luxury Cabins</Link>
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Making a Reservation
+1.  **Select Dates**: Use the date selector to choose your desired check-in and check-out dates.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+    ```jsx
+    <DateSelector
+      settings={settings}
+      bookedDates={bookedDates}
+      cabin={cabin}
+    />
+    ```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+2.  **Enter Details**: Fill in the number of guests and any special requirements.
 
-## Learn More
+    ```jsx
+    <ReservationForm user={session.user} cabin={cabin} />
+    ```
 
-To learn more about Next.js, take a look at the following resources:
+<details>
+<summary>Example Code Snippet:</summary>
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```jsx
+  "use client";
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+  import { differenceInDays } from "date-fns";
+  import { useReservation } from "../_context/ReservationContext";
+  import { createBooking } from "../_lib/action";
+  import SubmitButton from "./SubmitButton";
 
-## Deploy on Vercel
+  function ReservationForm({ cabin, user }) {
+  const { range, resetRange } = useReservation();
+  const { maxCapacity, regularPrice, discount, id } = cabin;
+  const startDate = range.from;
+  const endDate = range.to;
+  const numNights = differenceInDays(endDate, startDate);
+  const cabinPrice = numNights * (regularPrice - discount);
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+  // The 5 data points / values that needs to be passed as well into the formData.
+  const bookingData = {
+  startDate,
+  endDate,
+  numNights,
+  cabinPrice,
+  cabinId: id,
+  };
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+  const createBookingWithData = createBooking.bind(null, bookingData);
+
+  return (
+  <div className="scale-[1.01]">
+  <div className="bg-primary-800 text-primary-300 px-16 py-2 flex justify-between items-center">
+  <p>Logged in as</p>
+
+  <div className="flex gap-4 items-center">
+  <img
+  // Important to display google profile images
+  referrerPolicy="no-referrer"
+  className="h-8 rounded-full"
+  src={user.image}
+  alt={user.name}
+  />
+  <p>{user.name}</p>
+  </div>
+  </div>
+
+  <form
+  // action={createBookingWithData}
+  action={async (formData) => {
+  await createBookingWithData(formData);
+  resetRange();
+  }}
+  className="bg-primary-900 py-10 px-16 text-lg flex gap-5 flex-col"
+  >
+  <div className="space-y-2">
+  <label htmlFor="numGuests">How many guests?</label>
+  <select
+  name="numGuests"
+  id="numGuests"
+  className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
+  required
+  >
+  <option value="" key="">
+  Select number of guests...
+  </option>
+  {Array.from({ length: maxCapacity }, (_, i) => i + 1).map((x) => (
+  <option value={x} key={x}>
+  {x} {x === 1 ? "guest" : "guests"}
+  </option>
+  ))}
+  </select>
+  </div>
+
+  <div className="space-y-2">
+  <label htmlFor="observations">
+  Anything we should know about your stay?
+  </label>
+  <textarea
+  name="observations"
+  id="observations"
+  className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
+  placeholder="Any pets, allergies, special requirements, etc.?"
+  />
+  </div>
+
+  <div className="flex justify-end items-center gap-6">
+  {!(startDate && endDate) ? (
+  <p className="text-primary-300 text-base">
+  Start by selecting dates
+  </p>
+  ) : (
+  <SubmitButton pendingLabel="Reserving...">Reserve Now</SubmitButton>
+  )}
+  </div>
+  </form>
+  </div>
+  );
+  }
+
+  export default ReservationForm;
+```
+</details>
+
+### User Authentication
+
+1.  **Login**: Use the "Sign in with Google" button on the `/login` page.
+    ```jsx
+    <SignInButton />
+    ```
+2.  **Account Management**: View and update your profile on the `/account` page.
+
+## ✨ Features
+
+-   🏠 **Cabin Browsing**: Explore a variety of luxury cabins.
+-   📅 **Reservation System**: Easily book your stay with a date selector and reservation form.
+-   🔑 **User Authentication**: Securely sign in and manage your profile.
+-   📱 **Responsive Design**: Enjoy a seamless experience on any device.
+-   ⚙️ **Filtering and Sorting**: Find the perfect cabin based on capacity.
+-   🎨 **Optimistic UI**: Enjoy smooth and responsive interactions.
+
+## 💻 Technologies Used
+
+| Technology                                   | Description                           |
+| :------------------------------------------- | :------------------------------------ |
+| [React](https://react.dev/)                  | JavaScript library for UI development |
+| [Next.js](https://nextjs.org/)               | React framework for web apps          |
+| [Tailwind CSS](https://tailwindcss.com/)   | Utility-first CSS framework           |
+| [Supabase](https://supabase.com/)             | Backend-as-a-service                  |
+| [NextAuth.js](https://next-auth.js.org/)      | Authentication library                |
+| [Date-fns](https://date-fns.org/)      | Date manipulation                |
+| [React Day Picker](https://react-day-picker.js.org/)      | Customizable date picker component                |
+
+## 🤝 Contributing
+
+We welcome contributions to The Wild Oasis! 🌿 Here are some guidelines:
+
+*   🐛 **Report Bugs**: Submit detailed bug reports.
+*   💡 **Suggest Enhancements**: Share your ideas for new features.
+*   🛠️ **Submit Pull Requests**: Contribute code with clear descriptions.
+
+## 📜 License
+
+This project is under the [MIT License](LICENSE).
+
+## 🧑‍💻 Author Info
+
+- Website: [The Wild Oasis Website](https://the-wild-oasis-website-gamma-ashen.vercel.app/)
+- Twitter: [@Lnnsa_18](https://twitter.com/twitterhandle)
+- LinkedIn: [linkedin.com/in/lancer18](https://linkedin.com/in/yourusername)
+- GitHub: [github.com/Lansa-18](https://github.com/yourusername)
+
+---
+
+[![Next.js](https://img.shields.io/badge/Next.js-black?style=flat-square&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-blue?style=flat-square&logo=react&logoColor=white)](https://reactjs.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat-square&logo=supabase&logoColor=white)](https://supabase.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Readme was generated by Dokugen](https://img.shields.io/badge/Readme%20was%20generated%20by-Dokugen-brightgreen)](https://github.com/samueltuoyo15/Dokugen)
