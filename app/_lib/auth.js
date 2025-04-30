@@ -32,9 +32,9 @@ const authConfig = {
       return session;
     },
   },
-  // pages: {
-  //   signIn: "/login",
-  // },
+  pages: {
+    signIn: "/login",
+  },
 };
 
 export const {
